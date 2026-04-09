@@ -13,6 +13,7 @@ import ru.samsung.gamestudio.GameSettings;
 public class GameObject {
     Texture texture;
     Body body;
+    int width,height;
 
     GameObject(String texturePath, int x, int y, int width, int height, World world) {
         this.width = width;
@@ -20,6 +21,7 @@ public class GameObject {
 
         texture = new Texture(texturePath);
         body = createBody(x, y, world);
+        body.setLinearDamping(10);
     }
     public void draw(SpriteBatch batch) {
         batch.draw(texture, getX() - (width / 2f), getY() - (height / 2f), width, height);

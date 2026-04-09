@@ -12,7 +12,7 @@ import ru.samsung.gamestudio.GameSettings;
 
 public class GameObject {
     Texture texture;
-    Body body;
+    public Body body;
     int width,height;
 
     GameObject(String texturePath, int x, int y, int width, int height, World world) {

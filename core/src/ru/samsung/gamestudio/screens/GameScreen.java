@@ -22,7 +22,7 @@ public class GameScreen extends ScreenAdapter {
     ArrayList<TrashObject> trashArray;
 
     public GameScreen(MyGdxGame myGdxGame) {
-        this.gameSession = new GameSession();
+        gameSession = new GameSession();
         trashArray = new ArrayList<>();
         this.myGdxGame = myGdxGame;
         shipObject = new ShipObject(GameSettings.SCREEN_WIDTH / 2, 150, GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT, GameResources.SHIP_IMG_PATH, myGdxGame.world);
@@ -44,6 +44,7 @@ public class GameScreen extends ScreenAdapter {
             );
             trashArray.add(trashObject);
         }
+        updateTrash();
         draw();
     }
     private void handleInput() {
@@ -57,11 +58,9 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.camera.update();
         myGdxGame.batch.setProjectionMatrix(myGdxGame.camera.combined);
         ScreenUtils.clear(Color.CLEAR);
-
         myGdxGame.batch.begin();
         shipObject.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
-        //updateTrash();
         myGdxGame.batch.end();
     }
     private void updateTrash() {

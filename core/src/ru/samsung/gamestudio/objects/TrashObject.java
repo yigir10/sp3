@@ -12,6 +12,7 @@ public class TrashObject extends GameObject{
     public TrashObject(int width, int height, String texturePath, World world) {
         super(texturePath, width / 2 + paddingHorizontal + (new Random()).nextInt((GameSettings.SCREEN_WIDTH - 2 * paddingHorizontal - width)), GameSettings.SCREEN_HEIGHT + height / 2, width, height, world);
         body.setLinearVelocity(new Vector2(0, -GameSettings.TRASH_VELOCITY));
+        body.setLinearDamping(0f);
     }
     public boolean isInFrame(){
         return getY() + height / 2 > 0;

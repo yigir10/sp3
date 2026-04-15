@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
 import ru.samsung.gamestudio.MyGdxGame;
+import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
 
@@ -20,12 +22,14 @@ public class GameScreen extends ScreenAdapter {
     ShipObject shipObject;
     GameSession gameSession;
     ArrayList<TrashObject> trashArray;
+    ArrayList<BulletObject> bulletArray;
 
     public GameScreen(MyGdxGame myGdxGame) {
         gameSession = new GameSession();
         trashArray = new ArrayList<>();
         this.myGdxGame = myGdxGame;
         shipObject = new ShipObject(GameSettings.SCREEN_WIDTH / 2, 150, GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT, GameResources.SHIP_IMG_PATH, myGdxGame.world);
+        bulletArray = new ArrayList<>();
     }
     @Override
     public void show() {
@@ -44,6 +48,11 @@ public class GameScreen extends ScreenAdapter {
             );
             trashArray.add(trashObject);
         }
+        if (shipObject.needToShoot()) {
+            BulletObject bulletObject = new BulletObject(GameResources.BULLET_IMG_PATH,shipObject.getX(),shipObject.getY() + 25 + GameSettings.SHIP_HEIGHT / 2,GameSettings.BULLET_WIDTH,GameSettings.BULLET_HEIGHT,myGdxGame.world);
+            bulletArray.add(bulletObject);
+        }
+        updateBullet();
         updateTrash();
         draw();
     }
@@ -60,6 +69,7 @@ public class GameScreen extends ScreenAdapter {
         ScreenUtils.clear(Color.CLEAR);
         myGdxGame.batch.begin();
         shipObject.draw(myGdxGame.batch);
+        for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }
@@ -68,6 +78,14 @@ public class GameScreen extends ScreenAdapter {
             if (!trashArray.get(i).isInFrame()) {
                 myGdxGame.world.destroyBody(trashArray.get(i).body);
                 trashArray.remove(i--);
+            }
+        }
+    }
+    private void updateBullet() {
+        for (int i = 0; i < bulletArray.size(); i++) {
+            if (!bulletArray.get(i).isInFrame()) {
+                myGdxGame.world.destroyBody(bulletArray.get(i).body);
+                bulletArray.remove(i--);
             }
         }
     }

@@ -41,18 +41,17 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.stepWorld();
         handleInput();
         if (gameSession.shouldSpawnTrash()) {
-            TrashObject trashObject = new TrashObject(
-                    GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
-                    GameResources.TRASH_IMG_PATH,
-                    myGdxGame.world
-            );
+            TrashObject trashObject = new TrashObject(GameResources.TRASH_IMG_PATH, GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,  myGdxGame.world);
             trashArray.add(trashObject);
         }
         if (shipObject.needToShoot()) {
             BulletObject bulletObject = new BulletObject(GameResources.BULLET_IMG_PATH,shipObject.getX(),shipObject.getY() + 25 + GameSettings.SHIP_HEIGHT / 2,GameSettings.BULLET_WIDTH,GameSettings.BULLET_HEIGHT,myGdxGame.world);
             bulletArray.add(bulletObject);
         }
-        updateBullet();
+        if (!shipObject.isAlive()) {
+            System.out.println("Game over!");
+        }
+        updateBullets();
         updateTrash();
         draw();
     }
@@ -75,15 +74,16 @@ public class GameScreen extends ScreenAdapter {
     }
     private void updateTrash() {
         for (int i = 0; i < trashArray.size(); i++) {
-            if (!trashArray.get(i).isInFrame()) {
+            if (!trashArray.get(i).isInFrame() || !trashArray.get(i).isAlive()) {
                 myGdxGame.world.destroyBody(trashArray.get(i).body);
                 trashArray.remove(i--);
             }
         }
     }
-    private void updateBullet() {
+
+    private void updateBullets() {
         for (int i = 0; i < bulletArray.size(); i++) {
-            if (!bulletArray.get(i).isInFrame()) {
+            if (bulletArray.get(i).hasToBeDestroyed()) {
                 myGdxGame.world.destroyBody(bulletArray.get(i).body);
                 bulletArray.remove(i--);
             }

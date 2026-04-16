@@ -14,10 +14,13 @@ public class GameObject {
     Texture texture;
     public Body body;
     int width,height;
+    public short cBits;
 
-    GameObject(String texturePath, int x, int y, int width, int height, World world) {
+
+    GameObject(String texturePath, int x, int y, int width, int height,short cBits, World world) {
         this.width = width;
         this.height = height;
+        this.cBits = cBits;
 
         texture = new Texture(texturePath);
         body = createBody(x, y, world);
@@ -41,13 +44,16 @@ public class GameObject {
         fixtureDef.shape = circleShape; // устанавливаем коллайдер
         fixtureDef.density = 0.1f; // устанавливаем плотность тела
         fixtureDef.friction = 1f; // устанвливаем коэффициент трения
+        fixtureDef.filter.categoryBits = cBits;
 
         body.createFixture(fixtureDef); // создаём fixture по описанному нами определению
         circleShape.dispose(); // так как коллайдер уже скопирован в fixutre, то circleShape может быть отчищена, чтобы не забивать оперативную память.
 
         body.setTransform(x * GameSettings.SCALE, y * GameSettings.SCALE, 0); // устанавливаем позицию тела по координатным осям и угол поворота
+
         return body;
     }
+    public void hit() {}
     public int getX() {
         return (int) (body.getPosition().x / GameSettings.SCALE);
     }

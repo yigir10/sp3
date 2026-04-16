@@ -12,10 +12,11 @@ import ru.samsung.gamestudio.GameSettings;
 
 public class ShipObject extends GameObject {
     long lastShotTime;
+    int livesLeft;
 
     public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
-        super(texturePath, x, y, width, height, world);
-
+        super(texturePath, x, y, width, height,GameSettings.SHIP_BIT, world);
+        livesLeft = 3;
     }
 
     private void putInFrame() {
@@ -31,6 +32,13 @@ public class ShipObject extends GameObject {
         if (getX() > (GameSettings.SCREEN_WIDTH + width / 2f)) {
             setX(0);
         }
+    }
+    @Override
+    public void hit() {
+        livesLeft -= 1;
+    }
+    public boolean isAlive() {
+        return livesLeft > 0;
     }
 
     @Override

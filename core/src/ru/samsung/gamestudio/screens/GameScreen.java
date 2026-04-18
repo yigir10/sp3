@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
 
+import ru.samsung.gamestudio.ContactManager;
 import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
@@ -30,6 +31,7 @@ public class GameScreen extends ScreenAdapter {
         this.myGdxGame = myGdxGame;
         shipObject = new ShipObject(GameSettings.SCREEN_WIDTH / 2, 150, GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT, GameResources.SHIP_IMG_PATH, myGdxGame.world);
         bulletArray = new ArrayList<>();
+        new ContactManager(myGdxGame.world);
     }
     @Override
     public void show() {

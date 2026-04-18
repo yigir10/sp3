@@ -14,10 +14,12 @@ import ru.samsung.gamestudio.screens.GameScreen;
 public class MyGdxGame extends Game {
 	public SpriteBatch batch;
 	public OrthographicCamera camera;
+
 	public GameScreen gameScreen;
 	public World world;
-	public Vector3 touch;
 	float accumulator = 0;
+	public Vector3 touch;
+
 
 	@Override
 	public void create () {

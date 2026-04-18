@@ -41,12 +41,12 @@ public class GameObject {
         circleShape.setRadius(Math.max(width, height) * GameSettings.SCALE / 2f); // определяем радиус круга коллайдера
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circleShape; // устанавливаем коллайдер
-        fixtureDef.density = 0.1f; // устанавливаем плотность тела
-        fixtureDef.friction = 1f; // устанвливаем коэффициент трения
+        fixtureDef.shape = circleShape;
+        fixtureDef.density = 0.1f;
+        fixtureDef.friction = 1f;
         fixtureDef.filter.categoryBits = cBits;
 
-        body.createFixture(fixtureDef); // создаём fixture по описанному нами определению
+        body.createFixture(fixtureDef).setUserData(this);  // создаём fixture по описанному нами определению
         circleShape.dispose(); // так как коллайдер уже скопирован в fixutre, то circleShape может быть отчищена, чтобы не забивать оперативную память.
 
         body.setTransform(x * GameSettings.SCALE, y * GameSettings.SCALE, 0); // устанавливаем позицию тела по координатным осям и угол поворота

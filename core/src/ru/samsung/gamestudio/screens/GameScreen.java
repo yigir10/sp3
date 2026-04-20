@@ -1,20 +1,28 @@
 package ru.samsung.gamestudio.screens;
 
+import static com.badlogic.gdx.graphics.Color.WHITE;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
 
+import ru.samsung.gamestudio.ButtonView;
 import ru.samsung.gamestudio.ContactManager;
+import ru.samsung.gamestudio.FontBuilder;
 import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
+import ru.samsung.gamestudio.ImageView;
+import ru.samsung.gamestudio.LiveView;
 import ru.samsung.gamestudio.MovingBackgroundView;
 import ru.samsung.gamestudio.MyGdxGame;
+import ru.samsung.gamestudio.TextView;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
@@ -26,8 +34,10 @@ public class GameScreen extends ScreenAdapter {
     ArrayList<TrashObject> trashArray;
     ArrayList<BulletObject> bulletArray;
     MovingBackgroundView backgroundView;
-
-
+    ImageView topBlackoutView;
+    LiveView liveView;
+    TextView scoreTextView;
+    ButtonView pauseButton;
     public GameScreen(MyGdxGame myGdxGame) {
         gameSession = new GameSession();
         trashArray = new ArrayList<>();
@@ -35,7 +45,11 @@ public class GameScreen extends ScreenAdapter {
         shipObject = new ShipObject(GameSettings.SCREEN_WIDTH / 2, 150, GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT, GameResources.SHIP_IMG_PATH, myGdxGame.world);
         bulletArray = new ArrayList<>();
         new ContactManager(myGdxGame.world);
+        scoreTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1215);
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
+        topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_IMG_PATH);
+        pauseButton = new ButtonView(605, 1200, 46, 54, GameResources.PAUSE_IMG_PATH);
+        liveView = new LiveView(305, 1215);
     }
     @Override
     public void show() {
@@ -58,6 +72,8 @@ public class GameScreen extends ScreenAdapter {
             System.out.println("Game over!");
         }
         backgroundView.move();
+        scoreTextView.setText("Score: " + 100);
+        liveView.setLeftLives(shipObject.getLiveLeft());
         updateBullets();
         updateTrash();
         draw();
@@ -78,6 +94,10 @@ public class GameScreen extends ScreenAdapter {
         shipObject.draw(myGdxGame.batch);
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
+        topBlackoutView.draw(myGdxGame.batch);
+        scoreTextView.draw(myGdxGame.batch);
+        liveView.draw(myGdxGame.batch);
+        pauseButton.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }
     private void updateTrash() {
@@ -97,4 +117,5 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+
 }

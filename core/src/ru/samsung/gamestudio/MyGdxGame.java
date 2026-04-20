@@ -1,7 +1,9 @@
 package ru.samsung.gamestudio;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -19,7 +21,7 @@ public class MyGdxGame extends Game {
 	public World world;
 	float accumulator = 0;
 	public Vector3 touch;
-
+	public BitmapFont commonWhiteFont;
 
 	@Override
 	public void create () {
@@ -29,6 +31,7 @@ public class MyGdxGame extends Game {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
 		touch = new Vector3();
+		commonWhiteFont = FontBuilder.generate(24, Color.WHITE, GameResources.FONT_PATH);
 		gameScreen = new GameScreen(this);
 		setScreen(gameScreen);
 

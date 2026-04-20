@@ -28,4 +28,10 @@ public class View implements Disposable {
     @Override
     public void dispose() {
     }
+    public View(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 }

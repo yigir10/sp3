@@ -58,4 +58,7 @@ public class ShipObject extends GameObject {
         return false;
     }
 
+    public int getLiveLeft() {
+        return livesLeft;
+    }
 }

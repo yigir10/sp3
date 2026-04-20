@@ -1,6 +1,7 @@
 package ru.samsung.gamestudio;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MovingBackgroundView extends View {
     Texture texture;
@@ -17,5 +18,20 @@ public class MovingBackgroundView extends View {
     public void move() {
         texture1Y -= speed;
         texture2Y -= speed;
+        if (texture1Y <= -GameSettings.SCREEN_HEIGHT) {
+            texture1Y = GameSettings.SCREEN_HEIGHT;
+        }
+        if (texture2Y <= -GameSettings.SCREEN_HEIGHT) {
+            texture2Y = GameSettings.SCREEN_HEIGHT;
+        }
+    }
+    @Override
+    public void draw(SpriteBatch batch) {
+        batch.draw(texture, 0, texture1Y, GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
+        batch.draw(texture, 0, texture2Y, GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
+    }
+    @Override
+    public void dispose() {
+        texture.dispose();
     }
 }

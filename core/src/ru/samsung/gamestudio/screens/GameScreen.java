@@ -13,6 +13,7 @@ import ru.samsung.gamestudio.ContactManager;
 import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
+import ru.samsung.gamestudio.MovingBackgroundView;
 import ru.samsung.gamestudio.MyGdxGame;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
@@ -24,6 +25,8 @@ public class GameScreen extends ScreenAdapter {
     GameSession gameSession;
     ArrayList<TrashObject> trashArray;
     ArrayList<BulletObject> bulletArray;
+    MovingBackgroundView backgroundView;
+
 
     public GameScreen(MyGdxGame myGdxGame) {
         gameSession = new GameSession();
@@ -32,6 +35,7 @@ public class GameScreen extends ScreenAdapter {
         shipObject = new ShipObject(GameSettings.SCREEN_WIDTH / 2, 150, GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT, GameResources.SHIP_IMG_PATH, myGdxGame.world);
         bulletArray = new ArrayList<>();
         new ContactManager(myGdxGame.world);
+        backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
     }
     @Override
     public void show() {
@@ -53,6 +57,7 @@ public class GameScreen extends ScreenAdapter {
         if (!shipObject.isAlive()) {
             System.out.println("Game over!");
         }
+        backgroundView.move();
         updateBullets();
         updateTrash();
         draw();
@@ -69,6 +74,7 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.batch.setProjectionMatrix(myGdxGame.camera.combined);
         ScreenUtils.clear(Color.CLEAR);
         myGdxGame.batch.begin();
+        backgroundView.draw(myGdxGame.batch);
         shipObject.draw(myGdxGame.batch);
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);

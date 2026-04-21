@@ -13,4 +13,9 @@ public class GameResources {
     public static final String FULL_BLACKOUT_IMG_PATH = "textures/blackout_full.png";
     public static final String BUTTON_BACKGROUND_IMG_PATH = "textures/button_background_short.png";
     public static final String BUTTON_LONG_BG_IMG_PATH = "textures/button_background_long.png";
+    public static final String BACKGROUND_MUSIC_PATH = "sounds/background_music.mp3";
+    public static final String SHOOT_SOUND_PATH = "sounds/shoot.mp3";
+    public static final String DESTROY_SOUND_PATH = "sounds/destroy.mp3";
+    public static final String BUTTON_SHORT_BG_IMG_PATH = "textures/button_background_short.png";
+    public static final String BLACKOUT_MIDDLE_IMG_PATH = "textures/blackout_middle.png";
 }

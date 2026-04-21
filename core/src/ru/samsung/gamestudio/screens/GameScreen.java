@@ -55,16 +55,15 @@ public class GameScreen extends ScreenAdapter {
         topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_IMG_PATH);
         pauseButton = new ButtonView(605, 1200, 46, 54, GameResources.PAUSE_IMG_PATH);
         fullBlackoutView = new ImageView(0,0,GameResources.FULL_BLACKOUT_IMG_PATH);
-        homeButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 - 205,400,200,100,myGdxGame.bigCommonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Home");
-        continueButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 + 5,400,200,100,myGdxGame.bigCommonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Continue");
-        pauseTextView = new TextView(myGdxGame.bigCommonWhiteFont,GameSettings.SCREEN_WIDTH / 2 - 90,700);
-        pauseTextView.setText("Pause");
+        homeButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 - 205,400,200,100,myGdxGame.commonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Home");
+        continueButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 + 5,400,200,100,myGdxGame.commonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Continue");
+        pauseTextView = new TextView(myGdxGame.largeWhiteFont, GameSettings.SCREEN_WIDTH / 2 - 90,700,"Pause");
 
         liveView = new LiveView(305, 1215);
     }
     @Override
     public void show() {
-        gameSession.startGame();
+        restartGame();
     }
 
     @Override
@@ -78,34 +77,40 @@ public class GameScreen extends ScreenAdapter {
             if (shipObject.needToShoot()) {
                 BulletObject bulletObject = new BulletObject(GameResources.BULLET_IMG_PATH, shipObject.getX(), shipObject.getY() + 25 + GameSettings.SHIP_HEIGHT / 2, GameSettings.BULLET_WIDTH, GameSettings.BULLET_HEIGHT, myGdxGame.world);
                 bulletArray.add(bulletObject);
+                if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.shootSound.play(1f);
             }
             if (!shipObject.isAlive()) {
-                System.out.println("Game over!");
+                myGdxGame.setScreen(myGdxGame.menuScreen);
             }
-
+            gameSession.updateScore();
+            scoreTextView.setText("Score: " + gameSession.getScore());
+            liveView.setLeftLives(shipObject.getLiveLeft());
+            updateBullets();
+            updateTrash();
             backgroundView.move();
+            myGdxGame.stepWorld();
         }
-        scoreTextView.setText("Score: " + 100);
-        liveView.setLeftLives(shipObject.getLiveLeft());
-        updateBullets();
-        updateTrash();
         draw();
-        myGdxGame.stepWorld();
     }
     private void handleInput() {
+        if (Gdx.input.isTouched()) {
+            myGdxGame.touch = myGdxGame.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            shipObject.move(myGdxGame.touch);
+        }
         switch (gameSession.state) {
             case PLAYING:
                 if (pauseButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
                     gameSession.pauseGame();
                 }
-                if (Gdx.input.isTouched()) {
-                    myGdxGame.touch = myGdxGame.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-                    shipObject.move(myGdxGame.touch);
-                }
-                shipObject.move(myGdxGame.touch);
                 break;
 
             case PAUSED:
+                if (continueButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                    gameSession.resumeGame();
+                }
+                if (homeButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                    myGdxGame.setScreen(myGdxGame.menuScreen);
+                }
                 break;
         }
 
@@ -134,7 +139,14 @@ public class GameScreen extends ScreenAdapter {
     }
     private void updateTrash() {
         for (int i = 0; i < trashArray.size(); i++) {
-            if (!trashArray.get(i).isInFrame() || !trashArray.get(i).isAlive()) {
+            boolean hasToBeDestroyed = !trashArray.get(i).isAlive() || !trashArray.get(i).isInFrame();
+
+            if (!trashArray.get(i).isAlive()) {
+                gameSession.destructionRegistration();
+                if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.explosionSound.play(0.1f);
+            }
+
+            if (hasToBeDestroyed) {
                 myGdxGame.world.destroyBody(trashArray.get(i).body);
                 trashArray.remove(i--);
             }
@@ -148,6 +160,27 @@ public class GameScreen extends ScreenAdapter {
                 bulletArray.remove(i--);
             }
         }
+    }
+    private void restartGame() {
+
+        for (int i = 0; i < trashArray.size(); i++) {
+            myGdxGame.world.destroyBody(trashArray.get(i).body);
+            trashArray.remove(i--);
+        }
+
+        if (shipObject != null) {
+            myGdxGame.world.destroyBody(shipObject.body);
+        }
+
+        shipObject = new ShipObject(
+                GameSettings.SCREEN_WIDTH / 2, 150,
+                GameSettings.SHIP_WIDTH, GameSettings.SHIP_HEIGHT,
+                GameResources.SHIP_IMG_PATH,
+                myGdxGame.world
+        );
+
+        bulletArray.clear();
+        gameSession.startGame();
     }
 
 }

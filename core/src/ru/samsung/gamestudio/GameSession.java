@@ -3,11 +3,14 @@ package ru.samsung.gamestudio;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class GameSession {
-
     long nextTrashSpawnTime;
     long sessionStartTime;
     public GameState state;
     private long pauseStartTime;
+    private int score;
+    int destructedTrashNumber;
+
+
 
     public void startGame() {
         state = GameState.PLAYING;
@@ -34,6 +37,15 @@ public class GameSession {
     public void resumeGame() {
         state = GameState.PLAYING;
         sessionStartTime += TimeUtils.millis() - pauseStartTime;
+    }
+    public void destructionRegistration() {
+        destructedTrashNumber += 1;
+    }
+    public void updateScore() {
+        score = (int) (TimeUtils.millis() - sessionStartTime) / 100 + destructedTrashNumber * 100;
+    }
+    public int getScore() {
+        return score;
     }
 }
 

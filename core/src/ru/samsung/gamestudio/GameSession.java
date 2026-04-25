@@ -2,6 +2,10 @@ package ru.samsung.gamestudio;
 
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
+
+import ru.samsung.gamestudio.managers.MemoryManager;
+
 public class GameSession {
     long nextTrashSpawnTime;
     long sessionStartTime;
@@ -11,9 +15,24 @@ public class GameSession {
     int destructedTrashNumber;
 
 
-
+    public void endGame() {
+        updateScore();
+        state = GameState.ENDED;
+        ArrayList<Integer> recordsTable = MemoryManager.loadRecordsTable();
+        if (recordsTable == null) {
+            recordsTable = new ArrayList<>();
+        }
+        int foundIdx = 0;
+        for (; foundIdx < recordsTable.size(); foundIdx++) {
+            if (recordsTable.get(foundIdx) < getScore()) break;
+        }
+        recordsTable.add(foundIdx, getScore());
+        MemoryManager.saveTableOfRecords(recordsTable);
+    }
     public void startGame() {
         state = GameState.PLAYING;
+        score = 0;
+        destructedTrashNumber = 0;
         sessionStartTime = TimeUtils.millis();
         nextTrashSpawnTime = sessionStartTime + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN * getTrashPeriodCoolDown());
     }

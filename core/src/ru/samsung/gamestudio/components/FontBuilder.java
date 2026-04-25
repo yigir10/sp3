@@ -1,4 +1,4 @@
-package ru.samsung.gamestudio;
+package ru.samsung.gamestudio.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

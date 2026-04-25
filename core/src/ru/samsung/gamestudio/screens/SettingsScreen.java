@@ -6,14 +6,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import ru.samsung.gamestudio.AudioManager;
-import ru.samsung.gamestudio.ButtonView;
+import java.util.ArrayList;
+
+import ru.samsung.gamestudio.managers.AudioManager;
+import ru.samsung.gamestudio.components.ButtonView;
 import ru.samsung.gamestudio.GameResources;
-import ru.samsung.gamestudio.ImageView;
-import ru.samsung.gamestudio.MemoryManager;
-import ru.samsung.gamestudio.MovingBackgroundView;
+import ru.samsung.gamestudio.components.ImageView;
+import ru.samsung.gamestudio.managers.MemoryManager;
+import ru.samsung.gamestudio.components.MovingBackgroundView;
 import ru.samsung.gamestudio.MyGdxGame;
-import ru.samsung.gamestudio.TextView;
+import ru.samsung.gamestudio.components.TextView;
 
 public class SettingsScreen extends ScreenAdapter {
     MyGdxGame myGdxGame;
@@ -63,6 +65,10 @@ public class SettingsScreen extends ScreenAdapter {
     void handleInput() {
         if (Gdx.input.justTouched()) {
             myGdxGame.touch = myGdxGame.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            if (clearSettingView.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                MemoryManager.saveTableOfRecords(new ArrayList<>());
+            }
 
             if (returnButton.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
                 myGdxGame.setScreen(myGdxGame.menuScreen);

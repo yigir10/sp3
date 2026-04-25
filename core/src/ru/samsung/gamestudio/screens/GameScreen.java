@@ -1,29 +1,26 @@
 package ru.samsung.gamestudio.screens;
 
-import static com.badlogic.gdx.graphics.Color.WHITE;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
 
-import ru.samsung.gamestudio.ButtonView;
-import ru.samsung.gamestudio.ContactManager;
-import ru.samsung.gamestudio.FontBuilder;
+import ru.samsung.gamestudio.components.ButtonView;
+import ru.samsung.gamestudio.managers.ContactManager;
 import ru.samsung.gamestudio.GameResources;
 import ru.samsung.gamestudio.GameSession;
 import ru.samsung.gamestudio.GameSettings;
 import ru.samsung.gamestudio.GameState;
-import ru.samsung.gamestudio.ImageView;
-import ru.samsung.gamestudio.LiveView;
-import ru.samsung.gamestudio.MovingBackgroundView;
+import ru.samsung.gamestudio.components.ImageView;
+import ru.samsung.gamestudio.components.LiveView;
+import ru.samsung.gamestudio.managers.MemoryManager;
+import ru.samsung.gamestudio.components.MovingBackgroundView;
 import ru.samsung.gamestudio.MyGdxGame;
-import ru.samsung.gamestudio.TextView;
+import ru.samsung.gamestudio.components.RecordsListView;
+import ru.samsung.gamestudio.components.TextView;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
@@ -43,6 +40,9 @@ public class GameScreen extends ScreenAdapter {
     ButtonView  homeButton;
     ButtonView  continueButton;
     TextView pauseTextView;
+    TextView recordsTextView;
+    RecordsListView recordsListView;
+    ButtonView homeButton2;
     public GameScreen(MyGdxGame myGdxGame) {
         gameSession = new GameSession();
         trashArray = new ArrayList<>();
@@ -58,7 +58,15 @@ public class GameScreen extends ScreenAdapter {
         homeButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 - 205,400,200,100,myGdxGame.commonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Home");
         continueButton = new ButtonView(GameSettings.SCREEN_WIDTH / 2 + 5,400,200,100,myGdxGame.commonBlackFont,GameResources.BUTTON_BACKGROUND_IMG_PATH,"Continue");
         pauseTextView = new TextView(myGdxGame.largeWhiteFont, GameSettings.SCREEN_WIDTH / 2 - 90,700,"Pause");
-
+        recordsListView = new RecordsListView(myGdxGame.commonWhiteFont, 690);
+        recordsTextView = new TextView(myGdxGame.largeWhiteFont, 206, 842, "Last records");
+        homeButton2 = new ButtonView(
+                280, 365,
+                160, 70,
+                myGdxGame.commonBlackFont,
+                GameResources.BUTTON_SHORT_BG_IMG_PATH,
+                "Home"
+        );
         liveView = new LiveView(305, 1215);
     }
     @Override
@@ -80,10 +88,12 @@ public class GameScreen extends ScreenAdapter {
                 if (myGdxGame.audioManager.isSoundOn) myGdxGame.audioManager.shootSound.play(1f);
             }
             if (!shipObject.isAlive()) {
-                myGdxGame.setScreen(myGdxGame.menuScreen);
+                gameSession.endGame();
+                recordsListView.setRecords(MemoryManager.loadRecordsTable());
             }
             gameSession.updateScore();
             scoreTextView.setText("Score: " + gameSession.getScore());
+
             liveView.setLeftLives(shipObject.getLiveLeft());
             updateBullets();
             updateTrash();
@@ -112,6 +122,11 @@ public class GameScreen extends ScreenAdapter {
                     myGdxGame.setScreen(myGdxGame.menuScreen);
                 }
                 break;
+            case ENDED:
+                if (homeButton2.isHit(myGdxGame.touch.x, myGdxGame.touch.y)) {
+                    myGdxGame.setScreen(myGdxGame.menuScreen);
+                }
+                break;
         }
 
     }
@@ -133,6 +148,11 @@ public class GameScreen extends ScreenAdapter {
             homeButton.draw(myGdxGame.batch);
             continueButton.draw(myGdxGame.batch);
             pauseTextView.draw(myGdxGame.batch);
+        } else if (gameSession.state == GameState.ENDED) {
+            fullBlackoutView.draw(myGdxGame.batch);
+            recordsTextView.draw(myGdxGame.batch);
+            recordsListView.draw(myGdxGame.batch);
+            homeButton2.draw(myGdxGame.batch);
         }
         pauseButton.draw(myGdxGame.batch);
         myGdxGame.batch.end();

@@ -1,7 +1,6 @@
 package ru.samsung.gamestudio;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -12,8 +11,11 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.Gdx;
 
+import ru.samsung.gamestudio.managers.AudioManager;
+import ru.samsung.gamestudio.components.FontBuilder;
 import ru.samsung.gamestudio.screens.GameScreen;
 import ru.samsung.gamestudio.screens.MenuScreen;
+import ru.samsung.gamestudio.screens.RecordsScreen;
 import ru.samsung.gamestudio.screens.SettingsScreen;
 
 public class MyGdxGame extends Game {
@@ -22,6 +24,7 @@ public class MyGdxGame extends Game {
 	public AudioManager audioManager;
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
+	public RecordsScreen recordsScreen;
 	public World world;
 	public SettingsScreen settingsScreen;
 	float accumulator = 0;
@@ -29,6 +32,7 @@ public class MyGdxGame extends Game {
 	public BitmapFont commonWhiteFont;
 	public BitmapFont largeWhiteFont;
 	public BitmapFont commonBlackFont;
+
 
 	@Override
 	public void create () {
@@ -45,8 +49,8 @@ public class MyGdxGame extends Game {
 		gameScreen = new GameScreen(this);
 		settingsScreen = new SettingsScreen(this);
 		menuScreen = new MenuScreen(this);
+		recordsScreen = new RecordsScreen(this);
 		setScreen(menuScreen);
-
 	}
 	
 	@Override
